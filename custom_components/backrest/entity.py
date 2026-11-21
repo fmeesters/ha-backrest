@@ -28,6 +28,17 @@ def _via_instance(coordinator: BackrestCoordinator) -> dict[str, Any]:
     return {"via_device": (DOMAIN, coordinator.instance)}
 
 
+def device_name(instance: str, item_id: str) -> str:
+    """Name a plan or repo device, without repeating the instance name.
+
+    A plan called "dockervm-daily" on instance "dockervm" stays
+    "dockervm-daily"; a plan called "daily" becomes "dockervm daily".
+    """
+    if item_id.casefold().startswith(instance.casefold()):
+        return item_id
+    return f"{instance} {item_id}"
+
+
 def plan_identifier(instance: str, plan_id: str) -> tuple[str, str]:
     """Return the device identifier of a plan."""
     return (DOMAIN, f"{instance}_plan_{plan_id}")
@@ -57,7 +68,7 @@ class BackrestPlanEntity(CoordinatorEntity[BackrestCoordinator]):
         self._attr_unique_id = f"{instance}_plan_{plan_id}_{description.key}"
         self._attr_device_info = DeviceInfo(
             identifiers={plan_identifier(instance, plan_id)},
-            name=f"{instance} {plan_id}",
+            name=device_name(instance, plan_id),
             manufacturer=MANUFACTURER,
             model="Backup plan",
             entry_type=DeviceEntryType.SERVICE,
@@ -97,7 +108,7 @@ class BackrestRepoEntity(CoordinatorEntity[BackrestCoordinator]):
         )
         self._attr_device_info = DeviceInfo(
             identifiers={repo_identifier(instance, repo)},
-            name=f"{instance} {repo.id}",
+            name=device_name(instance, repo.id),
             manufacturer=MANUFACTURER,
             model="Repository",
             entry_type=DeviceEntryType.SERVICE,
