@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from typing import Any
+
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
 from homeassistant.helpers.entity import EntityDescription
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
@@ -9,6 +12,31 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from .api import Repo
 from .const import DOMAIN, MANUFACTURER
 from .coordinator import BackrestCoordinator, PlanData, RepoData
+
+
+def _via_instance(coordinator: BackrestCoordinator) -> dict[str, Any]:
+    """Link a device to the instance device.
+
+    Newer Home Assistant versions want `via_device_id`; older versions only know
+    `via_device`. Use whichever this version supports.
+    """
+    if "via_device_id" in DeviceInfo.__annotations__:
+        instance = dr.async_get(coordinator.hass).async_get_device(
+            identifiers={(DOMAIN, coordinator.instance)}
+        )
+        return {"via_device_id": instance.id} if instance else {}
+    return {"via_device": (DOMAIN, coordinator.instance)}
+
+
+def device_name(instance: str, item_id: str) -> str:
+    """Name a plan or repo device, without repeating the instance name.
+
+    A plan called "dockervm-daily" on instance "dockervm" stays
+    "dockervm-daily"; a plan called "daily" becomes "dockervm daily".
+    """
+    if item_id.casefold().startswith(instance.casefold()):
+        return item_id
+    return f"{instance} {item_id}"
 
 
 def plan_identifier(instance: str, plan_id: str) -> tuple[str, str]:
@@ -40,12 +68,12 @@ class BackrestPlanEntity(CoordinatorEntity[BackrestCoordinator]):
         self._attr_unique_id = f"{instance}_plan_{plan_id}_{description.key}"
         self._attr_device_info = DeviceInfo(
             identifiers={plan_identifier(instance, plan_id)},
-            name=f"{instance} {plan_id}",
+            name=device_name(instance, plan_id),
             manufacturer=MANUFACTURER,
             model="Backup plan",
             entry_type=DeviceEntryType.SERVICE,
-            via_device=(DOMAIN, instance),
             configuration_url=coordinator.client.url,
+            **_via_instance(coordinator),  # type: ignore[typeddict-item]
         )
 
     @property
@@ -80,12 +108,12 @@ class BackrestRepoEntity(CoordinatorEntity[BackrestCoordinator]):
         )
         self._attr_device_info = DeviceInfo(
             identifiers={repo_identifier(instance, repo)},
-            name=f"{instance} {repo.id}",
+            name=device_name(instance, repo.id),
             manufacturer=MANUFACTURER,
             model="Repository",
             entry_type=DeviceEntryType.SERVICE,
-            via_device=(DOMAIN, instance),
             configuration_url=coordinator.client.url,
+            **_via_instance(coordinator),  # type: ignore[typeddict-item]
         )
 
     @property

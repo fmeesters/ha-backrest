@@ -17,6 +17,7 @@ from custom_components.backrest.api import (
     BackrestConnectionError,
 )
 from custom_components.backrest.const import DOMAIN
+from custom_components.backrest.entity import device_name
 
 
 async def test_setup_and_unload(
@@ -101,3 +102,10 @@ async def test_remove_stale_device(
 
     assert await remove("dockervm_plan_appdata") is False
     assert await remove("dockervm_plan_gone") is True
+
+
+def test_device_name() -> None:
+    """The instance name is not repeated when the ID already starts with it."""
+    assert device_name("dockervm", "dockervm-elektra") == "dockervm-elektra"
+    assert device_name("Elektra", "elektra-swiss") == "elektra-swiss"
+    assert device_name("dockervm", "swiss") == "dockervm swiss"

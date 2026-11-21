@@ -62,8 +62,8 @@ class OperationStatus(StrEnum):
 
     @property
     def is_running(self) -> bool:
-        """Return True while the operation is queued or running."""
-        return self in (OperationStatus.PENDING, OperationStatus.IN_PROGRESS)
+        """Return True while the operation is actually running."""
+        return self is OperationStatus.IN_PROGRESS
 
     @property
     def is_finished(self) -> bool:
@@ -291,6 +291,14 @@ class Operation:
     summary: BackupSummary | None = None
     error_count: int = 0
 
+    def is_scheduled(self, now: datetime) -> bool:
+        """Return True for a pending operation that is planned for later."""
+        return (
+            self.status is OperationStatus.PENDING
+            and self.started is not None
+            and self.started > now
+        )
+
     @property
     def duration(self) -> float | None:
         """Return the run time in seconds once the operation has ended."""
@@ -346,10 +354,21 @@ class PlanBackups:
     last_finished: Operation | None = None
 
     @classmethod
-    def from_operations(cls, operations: list[Operation]) -> PlanBackups:
-        """Pick the relevant backups out of a plan's recent operations."""
+    def from_operations(
+        cls, operations: list[Operation], now: datetime | None = None
+    ) -> PlanBackups:
+        """Pick the relevant backups out of a plan's recent operations.
+
+        Backrest creates the next scheduled run as a pending operation that
+        starts in the future. That one is not a backup yet, so it is skipped.
+        """
+        now = now or datetime.now(tz=UTC)
         backups = sorted(
-            (op for op in operations if op.kind is OperationKind.BACKUP),
+            (
+                op
+                for op in operations
+                if op.kind is OperationKind.BACKUP and not op.is_scheduled(now)
+            ),
             key=lambda op: op.id,
             reverse=True,
         )

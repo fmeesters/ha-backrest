@@ -16,7 +16,9 @@ from custom_components.backrest.api import (
     BackrestConnectionError,
     BackrestResponseError,
     OperationKind,
+    OperationList,
     OperationStatus,
+    PlanBackups,
 )
 
 from .conftest import load_json
@@ -158,3 +160,18 @@ async def test_connection_error(
     aioclient_mock.post(f"{URL}/v1.Backrest/GetConfig", exc=exc)
     with pytest.raises(BackrestConnectionError):
         await client.get_config()
+
+
+def test_scheduled_run_is_skipped() -> None:
+    """A pending run planned for later is not the latest backup."""
+    ops = OperationList.from_dict(load_json("operations_offsite.json")).operations
+    backups = PlanBackups.from_operations(ops)
+    assert backups.latest is not None
+    assert backups.latest.id == 90
+    assert backups.latest.status is OperationStatus.ERROR
+
+    now = datetime(2100, 1, 2, tzinfo=UTC)
+    queued = PlanBackups.from_operations(ops, now=now)
+    assert queued.latest is not None
+    assert queued.latest.status is OperationStatus.PENDING
+    assert not queued.latest.status.is_running
