@@ -124,7 +124,7 @@ The integration follows the Home Assistant [Integration Quality Scale](https://d
 
 ## Releases
 
-Push a tag that matches the version in `manifest.json` (for example `v0.1.2`) and the release workflow publishes a GitHub release. HACS then offers it as an update.
+Push a tag that matches the version in `manifest.json` (for example `v0.1.2`) and the release workflow publishes a GitHub release; a release made by hand in the GitHub UI with such a tag works too. HACS then offers it as an update.
 
 ## Development
 
