@@ -1,0 +1,35 @@
+{
+  "entity": {
+    "binary_sensor": {
+      "running": {
+        "default": "mdi:backup-restore",
+        "state": { "off": "mdi:sleep" }
+      }
+    },
+    "sensor": {
+      "status": {
+        "default": "mdi:cloud-question",
+        "state": {
+          "pending": "mdi:timer-sand",
+          "in_progress": "mdi:cloud-upload",
+          "success": "mdi:cloud-check",
+          "warning": "mdi:cloud-alert",
+          "error": "mdi:cloud-cancel",
+          "cancelled": "mdi:cloud-off-outline"
+        }
+      },
+      "progress": { "default": "mdi:progress-upload" },
+      "last_backup": { "default": "mdi:history" },
+      "next_backup": { "default": "mdi:calendar-clock" },
+      "last_data_added": { "default": "mdi:database-plus" },
+      "last_duration": { "default": "mdi:timer-outline" },
+      "last_error": { "default": "mdi:alert-circle-outline" },
+      "protected_data": { "default": "mdi:shield-check" },
+      "backups_success_30d": { "default": "mdi:check-circle-outline" },
+      "backups_warning_30d": { "default": "mdi:alert-outline" },
+      "backups_failed_30d": { "default": "mdi:close-circle-outline" },
+      "snapshots": { "default": "mdi:camera-burst" },
+      "data_added_30d": { "default": "mdi:database-arrow-up" }
+    }
+  }
+}

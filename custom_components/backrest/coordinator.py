@@ -69,6 +69,8 @@ class BackrestCoordinator(DataUpdateCoordinator[BackrestData]):
             config_entry=config_entry,
             name=DOMAIN,
             update_interval=SCAN_INTERVAL,
+            # Skip state writes when nothing changed (all data are dataclasses).
+            always_update=False,
         )
         self.client = client
 
