@@ -1,0 +1,35 @@
+[project]
+name = "ha-backrest"
+version = "0.1.0"
+description = "Home Assistant integration for Backrest (restic) backups"
+requires-python = ">=3.13"
+license = "MIT"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["custom_components.backrest"]
+
+[tool.ruff]
+target-version = "py313"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF", "D", "ASYNC", "PL", "TC"]
+ignore = ["D203", "D213", "PLR2004", "PLR0913", "TC001", "TC002", "TC003"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["D103", "PLC0415"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["custom_components"]
+force-sort-within-sections = true
+combine-as-imports = true
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+ignore_missing_imports = true

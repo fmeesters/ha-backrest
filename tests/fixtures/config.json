@@ -1,0 +1,14 @@
+{
+  "modno": 7,
+  "version": 4,
+  "instance": "dockervm",
+  "repos": [
+    {"id": "elektra-sftp", "uri": "sftp:backrest@10.0.3.20:/mnt/user/backups/dockervm", "guid": "3f1c9a", "password": "secret", "env": ["X=1"]},
+    {"id": "swissbackup", "uri": "s3:https://s3.swissbackup.example/bucket", "guid": "7d2e11", "password": "secret"}
+  ],
+  "plans": [
+    {"id": "appdata", "repo": "elektra-sftp", "paths": ["/opt/appdata"], "schedule": {"cron": "0 3 * * *"}},
+    {"id": "offsite", "repo": "swissbackup", "paths": ["/opt/appdata"], "schedule": {"maxFrequencyDays": 1}}
+  ],
+  "auth": {"users": [{"name": "ha", "passwordBcrypt": "xxx"}]}
+}

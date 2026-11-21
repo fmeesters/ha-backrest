@@ -1,0 +1,11 @@
+{
+  "operations": [
+    {"id": "90", "flowId": "90", "repoId": "swissbackup", "planId": "offsite", "instanceId": "dockervm", "status": "STATUS_ERROR",
+     "unixTimeStartMs": "1763614800000", "unixTimeEndMs": "1763614860000",
+     "displayMessage": "Fatal: unable to open repository: connection refused",
+     "operationBackup": {}},
+    {"id": "91", "flowId": "90", "repoId": "swissbackup", "planId": "offsite", "instanceId": "dockervm", "status": "STATUS_SUCCESS",
+     "unixTimeStartMs": "1763614861000", "unixTimeEndMs": "1763614862000",
+     "operationRunHook": {"name": "plan/offsite/hook/0"}}
+  ]
+}

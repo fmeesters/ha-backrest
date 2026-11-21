@@ -1,0 +1,16 @@
+{
+  "repoSummaries": [
+    {"id": "elektra-sftp", "backupsSuccessLast30days": "30", "bytesAddedLast30days": "5368709120", "totalSnapshots": "42"},
+    {"id": "swissbackup", "backupsSuccessLast30days": "28", "backupsFailed30days": "2", "bytesAddedLast30days": "1073741824", "totalSnapshots": "35"}
+  ],
+  "planSummaries": [
+    {"id": "appdata", "backupsSuccessLast30days": "30", "bytesAddedLast30days": "5368709120", "totalSnapshots": "42",
+     "nextBackupTimeMs": "1763780400000", "protectedBytes": "21474836480",
+     "historyLast30days": [{"timestampMs": "1763596800000", "statusCounts": [{"count": "1", "status": "STATUS_SUCCESS"}]}, {"timestampMs": "1763683200000"}]},
+    {"id": "offsite", "backupsSuccessLast30days": "28", "backupsFailed30days": "2", "backupsWarningLast30days": "1",
+     "nextBackupTimeMs": "1763787600000", "protectedBytes": "21474836480",
+     "historyLast30days": [{"timestampMs": "1763683200000", "overdue": true}]}
+  ],
+  "configPath": "/config/config.json",
+  "dataPath": "/data"
+}
