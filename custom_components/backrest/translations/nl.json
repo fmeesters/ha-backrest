@@ -77,6 +77,8 @@
         }
       },
       "progress": { "name": "Voortgang" },
+      "current_started": { "name": "Huidige back-up gestart" },
+      "estimated_end": { "name": "Verwachte eindtijd" },
       "last_backup": { "name": "Laatste back-up" },
       "next_backup": { "name": "Volgende back-up" },
       "last_data_added": { "name": "Data toegevoegd bij laatste back-up" },

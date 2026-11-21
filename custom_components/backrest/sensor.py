@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from homeassistant.components.sensor import (
     SensorDeviceClass,
@@ -20,8 +20,9 @@ from homeassistant.const import (
 )
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
+from homeassistant.util import dt as dt_util
 
-from .api import OperationStatus
+from .api import Operation, OperationStatus
 from .const import MAX_STATE_LENGTH
 from .coordinator import BackrestConfigEntry, PlanData, RepoData
 from .entity import BackrestPlanEntity, BackrestRepoEntity
@@ -56,6 +57,32 @@ def _progress(data: PlanData) -> float | None:
     if latest.progress is None:
         return 0.0
     return round(latest.progress.percent_done * 100, 1)
+
+
+def _running(data: PlanData) -> Operation | None:
+    latest = data.backups.latest
+    return latest if latest is not None and latest.status.is_running else None
+
+
+def _current_started(data: PlanData) -> datetime | None:
+    running = _running(data)
+    return running.started if running else None
+
+
+def _estimated_end(data: PlanData) -> datetime | None:
+    """Extrapolate the end time from the run time so far and the percent done."""
+    running = _running(data)
+    if running is None or running.started is None or running.progress is None:
+        return None
+    done = running.progress.percent_done
+    if not 0.01 <= done < 1:
+        return None
+    elapsed = (dt_util.utcnow() - running.started).total_seconds()
+    if elapsed <= 0:
+        return None
+    end = running.started + timedelta(seconds=elapsed / done)
+    # Whole minutes, so the state does not change on every update.
+    return end.replace(second=0, microsecond=0) + timedelta(minutes=1)
 
 
 def _last_backup(data: PlanData) -> datetime | None:
@@ -121,6 +148,18 @@ PLAN_SENSORS: tuple[BackrestPlanSensorDescription, ...] = (
         native_unit_of_measurement=PERCENTAGE,
         suggested_display_precision=0,
         value_fn=_progress,
+    ),
+    BackrestPlanSensorDescription(
+        key="current_started",
+        translation_key="current_started",
+        device_class=SensorDeviceClass.TIMESTAMP,
+        value_fn=_current_started,
+    ),
+    BackrestPlanSensorDescription(
+        key="estimated_end",
+        translation_key="estimated_end",
+        device_class=SensorDeviceClass.TIMESTAMP,
+        value_fn=_estimated_end,
     ),
     BackrestPlanSensorDescription(
         key="last_backup",

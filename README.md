@@ -8,18 +8,19 @@ For every Backrest instance you add, you get:
 
 - a device per **backup plan**, with:
   - status of the newest backup (pending, in progress, success, warning, error, cancelled)
-  - progress of a running backup (%)
+  - progress of a running backup (%), when it started and its estimated end (run time so far divided by the fraction done)
   - time of the last finished backup and of the next scheduled one
   - data added and duration of the last backup
   - last error message
   - protected data (size of the newest good snapshot)
   - successful, warning and failed backups over the last 30 days
   - binary sensors *Backup running* and *Problem* (last backup failed, or the plan is overdue according to Backrest)
+- a `backrest_backup` event when a backup starts, progresses and ends.
 - a device per **repository**, with the number of snapshots and the data added over 30 days.
 
 New plans and repositories show up by themselves. Removed ones become unavailable and can then be deleted from the device page.
 
-> Status: early development. Live progress via Backrest's event stream, buttons to start or cancel a backup and events for automations are planned.
+> Status: early development. Live progress via Backrest's event stream, and buttons to start or cancel a backup are planned. Automations can follow backups with the `backrest_backup` event (see [Events](#events)).
 
 Translations: English, Dutch, German, French and Spanish.
 

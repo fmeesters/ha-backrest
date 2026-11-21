@@ -83,6 +83,12 @@
       "progress": {
         "name": "Progreso"
       },
+      "current_started": {
+        "name": "Copia actual iniciada"
+      },
+      "estimated_end": {
+        "name": "Fin estimado"
+      },
       "last_backup": {
         "name": "Última copia"
       },

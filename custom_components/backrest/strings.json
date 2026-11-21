@@ -77,6 +77,8 @@
         }
       },
       "progress": { "name": "Progress" },
+      "current_started": { "name": "Current backup started" },
+      "estimated_end": { "name": "Estimated end" },
       "last_backup": { "name": "Last backup" },
       "next_backup": { "name": "Next backup" },
       "last_data_added": { "name": "Data added by last backup" },
