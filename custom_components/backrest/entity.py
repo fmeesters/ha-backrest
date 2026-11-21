@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from typing import Any
+
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
 from homeassistant.helpers.entity import EntityDescription
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
@@ -9,6 +12,20 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from .api import Repo
 from .const import DOMAIN, MANUFACTURER
 from .coordinator import BackrestCoordinator, PlanData, RepoData
+
+
+def _via_instance(coordinator: BackrestCoordinator) -> dict[str, Any]:
+    """Link a device to the instance device.
+
+    Newer Home Assistant versions want `via_device_id`; older versions only know
+    `via_device`. Use whichever this version supports.
+    """
+    if "via_device_id" in DeviceInfo.__annotations__:
+        instance = dr.async_get(coordinator.hass).async_get_device(
+            identifiers={(DOMAIN, coordinator.instance)}
+        )
+        return {"via_device_id": instance.id} if instance else {}
+    return {"via_device": (DOMAIN, coordinator.instance)}
 
 
 def plan_identifier(instance: str, plan_id: str) -> tuple[str, str]:
@@ -44,8 +61,8 @@ class BackrestPlanEntity(CoordinatorEntity[BackrestCoordinator]):
             manufacturer=MANUFACTURER,
             model="Backup plan",
             entry_type=DeviceEntryType.SERVICE,
-            via_device=(DOMAIN, instance),
             configuration_url=coordinator.client.url,
+            **_via_instance(coordinator),  # type: ignore[typeddict-item]
         )
 
     @property
@@ -84,8 +101,8 @@ class BackrestRepoEntity(CoordinatorEntity[BackrestCoordinator]):
             manufacturer=MANUFACTURER,
             model="Repository",
             entry_type=DeviceEntryType.SERVICE,
-            via_device=(DOMAIN, instance),
             configuration_url=coordinator.client.url,
+            **_via_instance(coordinator),  # type: ignore[typeddict-item]
         )
 
     @property
