@@ -1,0 +1,129 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Se connecter à Backrest",
+        "description": "Saisissez l'adresse de l'interface web de Backrest, par exemple `http://192.168.1.10:9898`.",
+        "data": {
+          "url": "URL",
+          "username": "Nom d'utilisateur",
+          "password": "Mot de passe",
+          "verify_ssl": "Vérifier le certificat SSL"
+        },
+        "data_description": {
+          "url": "Adresse de l'interface web de Backrest, port compris.",
+          "username": "Laissez vide si l'authentification est désactivée dans Backrest.",
+          "password": "Mot de passe de cet utilisateur Backrest.",
+          "verify_ssl": "Désactivez pour les certificats auto-signés."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Authentifier à nouveau",
+        "description": "Backrest a refusé les identifiants de {instance}. Saisissez les identifiants actuels.",
+        "data": {
+          "username": "Nom d'utilisateur",
+          "password": "Mot de passe"
+        },
+        "data_description": {
+          "username": "Laissez vide si l'authentification est désactivée dans Backrest.",
+          "password": "Mot de passe de cet utilisateur Backrest."
+        }
+      },
+      "reconfigure": {
+        "title": "Modifier la connexion à Backrest",
+        "data": {
+          "url": "URL",
+          "username": "Nom d'utilisateur",
+          "password": "Mot de passe",
+          "verify_ssl": "Vérifier le certificat SSL"
+        },
+        "data_description": {
+          "url": "Adresse de l'interface web de Backrest, port compris.",
+          "username": "Laissez vide si l'authentification est désactivée dans Backrest.",
+          "password": "Laissez vide pour conserver le mot de passe actuel.",
+          "verify_ssl": "Désactivez pour les certificats auto-signés."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Échec de connexion",
+      "invalid_auth": "Authentification non valide",
+      "invalid_url": "Saisissez une URL commençant par http:// ou https://.",
+      "no_instance": "Cette instance Backrest n'est pas encore configurée. Terminez d'abord la configuration dans l'interface web de Backrest.",
+      "unknown": "Erreur inattendue"
+    },
+    "abort": {
+      "already_configured": "Le service est déjà configuré",
+      "reauth_successful": "La ré-authentification a réussi",
+      "reconfigure_successful": "La reconfiguration a réussi",
+      "wrong_instance": "Cette URL appartient à une autre instance Backrest."
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "running": {
+        "name": "Sauvegarde en cours"
+      },
+      "problem": {
+        "name": "Problème"
+      }
+    },
+    "sensor": {
+      "status": {
+        "name": "État",
+        "state": {
+          "pending": "En attente",
+          "in_progress": "En cours",
+          "success": "Réussie",
+          "warning": "Avertissement",
+          "error": "Erreur",
+          "cancelled": "Annulée"
+        }
+      },
+      "progress": {
+        "name": "Progression"
+      },
+      "last_backup": {
+        "name": "Dernière sauvegarde"
+      },
+      "next_backup": {
+        "name": "Prochaine sauvegarde"
+      },
+      "last_data_added": {
+        "name": "Données ajoutées par la dernière sauvegarde"
+      },
+      "last_duration": {
+        "name": "Durée de la dernière sauvegarde"
+      },
+      "last_error": {
+        "name": "Dernière erreur"
+      },
+      "protected_data": {
+        "name": "Données protégées"
+      },
+      "backups_success_30d": {
+        "name": "Sauvegardes réussies (30 jours)"
+      },
+      "backups_warning_30d": {
+        "name": "Sauvegardes avec avertissements (30 jours)"
+      },
+      "backups_failed_30d": {
+        "name": "Sauvegardes échouées (30 jours)"
+      },
+      "snapshots": {
+        "name": "Instantanés"
+      },
+      "data_added_30d": {
+        "name": "Données ajoutées (30 jours)"
+      }
+    }
+  },
+  "exceptions": {
+    "invalid_auth": {
+      "message": "Backrest a refusé les identifiants."
+    },
+    "update_failed": {
+      "message": "Impossible de mettre à jour les données de Backrest : {error}"
+    }
+  }
+}
