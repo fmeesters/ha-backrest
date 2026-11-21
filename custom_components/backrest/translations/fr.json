@@ -83,6 +83,12 @@
       "progress": {
         "name": "Progression"
       },
+      "current_started": {
+        "name": "Sauvegarde en cours démarrée"
+      },
+      "estimated_end": {
+        "name": "Fin estimée"
+      },
       "last_backup": {
         "name": "Dernière sauvegarde"
       },

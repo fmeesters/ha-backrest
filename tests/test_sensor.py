@@ -6,6 +6,7 @@ from unittest.mock import MagicMock
 
 from homeassistant.const import STATE_OFF, STATE_ON, STATE_UNAVAILABLE, STATE_UNKNOWN
 from homeassistant.core import HomeAssistant
+import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.backrest.api import (
@@ -129,3 +130,20 @@ async def test_diagnostics(
     assert "10.0.3.20" not in text
     assert "/opt/appdata" not in text
     assert diag["data"]["config"]["instance"] == "dockervm"
+
+
+@pytest.mark.freeze_time("2025-11-22T04:25:00+00:00")
+async def test_estimated_end(
+    hass: HomeAssistant, init_integration: MockConfigEntry
+) -> None:
+    """The end time comes from the real start of the backup and the percent done."""
+    # Started 03:00, 85 minutes for 42.5% -> 200 minutes in total.
+    assert (
+        _state(hass, "sensor.dockervm_appdata_current_backup_started")
+        == "2025-11-22T03:00:00+00:00"
+    )
+    assert (
+        _state(hass, "sensor.dockervm_appdata_estimated_end")
+        == "2025-11-22T06:21:00+00:00"
+    )
+    assert _state(hass, "sensor.dockervm_offsite_estimated_end") == STATE_UNKNOWN

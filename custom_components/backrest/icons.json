@@ -19,6 +19,8 @@
         }
       },
       "progress": { "default": "mdi:progress-upload" },
+      "current_started": { "default": "mdi:clock-start" },
+      "estimated_end": { "default": "mdi:clock-end" },
       "last_backup": { "default": "mdi:history" },
       "next_backup": { "default": "mdi:calendar-clock" },
       "last_data_added": { "default": "mdi:database-plus" },

@@ -10,5 +10,5 @@
   "issue_tracker": "https://github.com/fmeesters/ha-backrest/issues",
   "loggers": ["custom_components.backrest"],
   "requirements": [],
-  "version": "0.1.3"
+  "version": "0.1.4"
 }
