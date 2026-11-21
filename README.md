@@ -94,6 +94,45 @@ actions:
            | replace('_problem', '_last_error')) }}
 ```
 
+## Events
+
+Besides entities, the integration fires a `backrest_backup` event when a backup starts, makes progress and ends. Every plan uses the same event, so one automation follows all plans, including plans you add later, without listing entity IDs.
+
+| Field | Meaning |
+| --- | --- |
+| `type` | `started`, `progress` or `finished` |
+| `instance`, `plan_id`, `plan_name`, `repo_id` | which Backrest instance, plan and repository |
+| `device_id` | the plan's device in Home Assistant (for `device_attr`) |
+| `operation_id`, `started` | the backup run and when it started |
+| `progress`, `previous_progress` | percent done now and at the previous update (`progress` is empty when finished) |
+| `bytes_done`, `total_bytes`, `files_done`, `total_files` | restic's progress counters, when known |
+| `result` | `finished` only: `success`, `warning`, `error`, `cancelled` or `unknown` |
+| `ended`, `duration`, `data_added`, `error` | `finished` only: end time, seconds, bytes added, error message |
+
+`progress` events come with each update in which the percentage changed (once a minute). A backup that is already running when Home Assistant starts sends `started` again.
+
+Show a running backup as a notification that updates in steps of 10 %:
+
+```yaml
+alias: "Backups - Progress notification"
+triggers:
+  - trigger: event
+    event_type: backrest_backup
+conditions:
+  - condition: template
+    value_template: >-
+      {{ trigger.event.data.type != 'progress'
+         or (trigger.event.data.progress // 10)
+            != ((trigger.event.data.previous_progress or 0) // 10) }}
+actions:
+  - action: notify.notify
+    data:
+      title: "Backup {{ trigger.event.data.plan_name }}"
+      message: >-
+        {{ trigger.event.data.result if trigger.event.data.type == 'finished'
+           else (trigger.event.data.progress | round(0) ~ ' %') }}
+```
+
 ## Known limitations
 
 - Progress is refreshed once a minute; live progress via Backrest's event stream is planned.

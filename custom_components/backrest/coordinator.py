@@ -8,6 +8,7 @@ from dataclasses import dataclass, field
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .api import (
@@ -21,6 +22,7 @@ from .api import (
     Summary,
 )
 from .const import DOMAIN, LOGGER, SCAN_INTERVAL
+from .events import EVENT_BACKUP, plan_events
 
 type BackrestConfigEntry = ConfigEntry[BackrestCoordinator]
 
@@ -98,7 +100,7 @@ class BackrestCoordinator(DataUpdateCoordinator[BackrestData]):
                 translation_placeholders={"error": str(err)},
             ) from err
 
-        return BackrestData(
+        data = BackrestData(
             config=config,
             plans={
                 plan.id: PlanData(
@@ -113,3 +115,40 @@ class BackrestCoordinator(DataUpdateCoordinator[BackrestData]):
                 for repo in config.repos
             },
         )
+        self._fire_backup_events(self.data, data)
+        return data
+
+    def _fire_backup_events(
+        self, previous: BackrestData | None, current: BackrestData
+    ) -> None:
+        """Fire `backrest_backup` events for backups that started, moved or ended."""
+        # Imported here: entity.py imports this module.
+        from .entity import device_name  # noqa: PLC0415
+
+        devices = dr.async_get(self.hass)
+        known = previous.plans.keys() if previous else set()
+        for plan_id in current.plans.keys() | known:
+            now = current.plans.get(plan_id)
+            before = previous.plans.get(plan_id) if previous else None
+            events = plan_events(
+                before.backups.latest if before else None,
+                now.backups.latest if now else None,
+                now.backups.last_finished if now else None,
+                first_refresh=previous is None,
+            )
+            if not events:
+                continue
+            device = devices.async_get_device(
+                identifiers={(DOMAIN, f"{self.instance}_plan_{plan_id}")}
+            )
+            for event in events:
+                self.hass.bus.async_fire(
+                    EVENT_BACKUP,
+                    {
+                        "instance": self.instance,
+                        "plan_id": plan_id,
+                        "plan_name": device_name(self.instance, plan_id),
+                        "device_id": device.id if device else None,
+                        **event,
+                    },
+                )
