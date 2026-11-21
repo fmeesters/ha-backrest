@@ -1,0 +1,97 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Verbinden met Backrest",
+        "description": "Vul het adres van de Backrest-webinterface in, bijvoorbeeld `http://192.168.1.10:9898`.",
+        "data": {
+          "url": "URL",
+          "username": "Gebruikersnaam",
+          "password": "Wachtwoord",
+          "verify_ssl": "SSL-certificaat verifiëren"
+        },
+        "data_description": {
+          "url": "Adres van de Backrest-webinterface, inclusief poort.",
+          "username": "Laat leeg als authenticatie in Backrest uit staat.",
+          "password": "Wachtwoord van die Backrest-gebruiker.",
+          "verify_ssl": "Zet uit bij zelfondertekende certificaten."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Opnieuw authenticeren",
+        "description": "Backrest heeft de inloggegevens voor {instance} geweigerd. Vul de huidige in.",
+        "data": {
+          "username": "Gebruikersnaam",
+          "password": "Wachtwoord"
+        },
+        "data_description": {
+          "username": "Laat leeg als authenticatie in Backrest uit staat.",
+          "password": "Wachtwoord van die Backrest-gebruiker."
+        }
+      },
+      "reconfigure": {
+        "title": "Backrest-verbinding wijzigen",
+        "data": {
+          "url": "URL",
+          "username": "Gebruikersnaam",
+          "password": "Wachtwoord",
+          "verify_ssl": "SSL-certificaat verifiëren"
+        },
+        "data_description": {
+          "url": "Adres van de Backrest-webinterface, inclusief poort.",
+          "username": "Laat leeg als authenticatie in Backrest uit staat.",
+          "password": "Laat leeg om het huidige wachtwoord te houden.",
+          "verify_ssl": "Zet uit bij zelfondertekende certificaten."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Kan geen verbinding maken",
+      "invalid_auth": "Ongeldige inloggegevens",
+      "invalid_url": "Vul een URL in die begint met http:// of https://.",
+      "no_instance": "Deze Backrest-instantie is nog niet ingesteld. Rond eerst de installatie af in de Backrest-webinterface.",
+      "unknown": "Onverwachte fout"
+    },
+    "abort": {
+      "already_configured": "Service is al geconfigureerd",
+      "reauth_successful": "Herauthenticatie geslaagd",
+      "reconfigure_successful": "Herconfiguratie geslaagd",
+      "wrong_instance": "Deze URL hoort bij een andere Backrest-instantie."
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "running": { "name": "Back-up bezig" },
+      "problem": { "name": "Probleem" }
+    },
+    "sensor": {
+      "status": {
+        "name": "Status",
+        "state": {
+          "pending": "In de wachtrij",
+          "in_progress": "Bezig",
+          "success": "Gelukt",
+          "warning": "Waarschuwing",
+          "error": "Fout",
+          "cancelled": "Geannuleerd"
+        }
+      },
+      "progress": { "name": "Voortgang" },
+      "last_backup": { "name": "Laatste back-up" },
+      "next_backup": { "name": "Volgende back-up" },
+      "last_data_added": { "name": "Data toegevoegd bij laatste back-up" },
+      "last_duration": { "name": "Duur laatste back-up" },
+      "last_error": { "name": "Laatste fout" },
+      "protected_data": { "name": "Beschermde data" },
+      "backups_success_30d": { "name": "Geslaagde back-ups (30 dagen)" },
+      "backups_warning_30d": { "name": "Back-ups met waarschuwing (30 dagen)" },
+      "backups_failed_30d": { "name": "Mislukte back-ups (30 dagen)" },
+      "snapshots": { "name": "Snapshots" },
+      "data_added_30d": { "name": "Data toegevoegd (30 dagen)" }
+    }
+  },
+  "exceptions": {
+    "invalid_auth": { "message": "Backrest heeft de inloggegevens geweigerd." },
+    "update_failed": { "message": "Kon geen gegevens ophalen uit Backrest: {error}" }
+  }
+}

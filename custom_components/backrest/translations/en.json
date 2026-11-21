@@ -1,0 +1,129 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to Backrest",
+        "description": "Enter the address of the Backrest web interface, for example `http://192.168.1.10:9898`.",
+        "data": {
+          "url": "URL",
+          "username": "Username",
+          "password": "Password",
+          "verify_ssl": "Verify SSL certificate"
+        },
+        "data_description": {
+          "url": "Address of the Backrest web interface, including the port.",
+          "username": "Leave empty when authentication is disabled in Backrest.",
+          "password": "Password of that Backrest user.",
+          "verify_ssl": "Turn off for self-signed certificates."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Reauthenticate",
+        "description": "Backrest rejected the credentials for {instance}. Enter the current ones.",
+        "data": {
+          "username": "Username",
+          "password": "Password"
+        },
+        "data_description": {
+          "username": "Leave empty when authentication is disabled in Backrest.",
+          "password": "Password of that Backrest user."
+        }
+      },
+      "reconfigure": {
+        "title": "Change the Backrest connection",
+        "data": {
+          "url": "URL",
+          "username": "Username",
+          "password": "Password",
+          "verify_ssl": "Verify SSL certificate"
+        },
+        "data_description": {
+          "url": "Address of the Backrest web interface, including the port.",
+          "username": "Leave empty when authentication is disabled in Backrest.",
+          "password": "Leave empty to keep the current password.",
+          "verify_ssl": "Turn off for self-signed certificates."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect",
+      "invalid_auth": "Invalid authentication",
+      "invalid_url": "Enter a URL that starts with http:// or https://.",
+      "no_instance": "This Backrest instance has not been set up yet. Finish the setup in the Backrest web interface first.",
+      "unknown": "Unexpected error"
+    },
+    "abort": {
+      "already_configured": "Service is already configured",
+      "reauth_successful": "Re-authentication was successful",
+      "reconfigure_successful": "Re-configuration was successful",
+      "wrong_instance": "This URL belongs to a different Backrest instance."
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "running": {
+        "name": "Backup running"
+      },
+      "problem": {
+        "name": "Problem"
+      }
+    },
+    "sensor": {
+      "status": {
+        "name": "Status",
+        "state": {
+          "pending": "Pending",
+          "in_progress": "In progress",
+          "success": "Success",
+          "warning": "Warning",
+          "error": "Error",
+          "cancelled": "Cancelled"
+        }
+      },
+      "progress": {
+        "name": "Progress"
+      },
+      "last_backup": {
+        "name": "Last backup"
+      },
+      "next_backup": {
+        "name": "Next backup"
+      },
+      "last_data_added": {
+        "name": "Data added by last backup"
+      },
+      "last_duration": {
+        "name": "Duration of last backup"
+      },
+      "last_error": {
+        "name": "Last error"
+      },
+      "protected_data": {
+        "name": "Protected data"
+      },
+      "backups_success_30d": {
+        "name": "Successful backups (30 days)"
+      },
+      "backups_warning_30d": {
+        "name": "Backups with warnings (30 days)"
+      },
+      "backups_failed_30d": {
+        "name": "Failed backups (30 days)"
+      },
+      "snapshots": {
+        "name": "Snapshots"
+      },
+      "data_added_30d": {
+        "name": "Data added (30 days)"
+      }
+    }
+  },
+  "exceptions": {
+    "invalid_auth": {
+      "message": "Backrest rejected the credentials."
+    },
+    "update_failed": {
+      "message": "Could not update data from Backrest: {error}"
+    }
+  }
+}

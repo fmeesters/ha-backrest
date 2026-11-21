@@ -1,0 +1,13 @@
+{
+  "operations": [
+    {"id": "100", "flowId": "100", "repoId": "elektra-sftp", "planId": "appdata", "instanceId": "dockervm", "status": "STATUS_SUCCESS",
+     "unixTimeStartMs": "1763694000000", "unixTimeEndMs": "1763694300000", "snapshotId": "abc123",
+     "operationBackup": {"lastStatus": {"summary": {"filesNew": "12", "filesChanged": "3", "dataAdded": "104857600", "totalFilesProcessed": "1500", "totalBytesProcessed": "21474836480", "totalDuration": 300.2, "snapshotId": "abc123"}}}},
+    {"id": "101", "flowId": "100", "repoId": "elektra-sftp", "planId": "appdata", "instanceId": "dockervm", "status": "STATUS_SUCCESS",
+     "unixTimeStartMs": "1763694301000", "unixTimeEndMs": "1763694302000", "snapshotId": "abc123",
+     "operationIndexSnapshot": {"snapshot": {"id": "abc123"}}},
+    {"id": "102", "flowId": "102", "repoId": "elektra-sftp", "planId": "appdata", "instanceId": "dockervm", "status": "STATUS_INPROGRESS",
+     "unixTimeStartMs": "1763780400000",
+     "operationBackup": {"lastStatus": {"status": {"percentDone": 0.425, "totalFiles": "1500", "totalBytes": "21474836480", "filesDone": "600", "bytesDone": "9126805504"}}}}
+  ]
+}
