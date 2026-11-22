@@ -89,6 +89,8 @@
       "backups_warning_30d": { "name": "Back-ups met waarschuwing (30 dagen)" },
       "backups_failed_30d": { "name": "Mislukte back-ups (30 dagen)" },
       "snapshots": { "name": "Snapshots" },
+      "repo_size": { "name": "Repositorygrootte" },
+      "compression_ratio": { "name": "Compressieverhouding" },
       "data_added_30d": { "name": "Data toegevoegd (30 dagen)" }
     }
   },

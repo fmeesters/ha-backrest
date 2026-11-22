@@ -119,6 +119,12 @@
       "snapshots": {
         "name": "Instantáneas"
       },
+      "repo_size": {
+        "name": "Tamaño del repositorio"
+      },
+      "compression_ratio": {
+        "name": "Relación de compresión"
+      },
       "data_added_30d": {
         "name": "Datos añadidos (30 días)"
       }

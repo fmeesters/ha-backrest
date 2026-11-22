@@ -17,8 +17,10 @@ from custom_components.backrest.api import (
     BackrestConfig,
     OperationList,
     PlanBackups,
+    RepoStats,
     SummaryDashboard,
 )
+from custom_components.backrest.api.models import latest_repo_stats
 from custom_components.backrest.const import DOMAIN
 
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -57,6 +59,14 @@ def _plan_backups(plan_id: str) -> PlanBackups:
     return PlanBackups.from_operations(ops.operations)
 
 
+def _repo_stats(repo_id: str) -> RepoStats | None:
+    """Return fixture stats for the Swiss repo; Elektra has none collected yet."""
+    path = FIXTURES / f"operations_repo_{repo_id}.json"
+    if not path.exists():
+        return None
+    return latest_repo_stats(OperationList.from_dict(load_json(path.name)).operations)
+
+
 @pytest.fixture
 def mock_client() -> Generator[MagicMock]:
     """Patch the API client with one that serves the fixtures."""
@@ -71,6 +81,9 @@ def mock_client() -> Generator[MagicMock]:
         )
         client.get_all_plan_backups = AsyncMock(
             side_effect=lambda plan_ids: {pid: _plan_backups(pid) for pid in plan_ids}
+        )
+        client.get_all_repo_stats = AsyncMock(
+            side_effect=lambda repos: {r.id: _repo_stats(r.id) for r in repos}
         )
         yield client
 

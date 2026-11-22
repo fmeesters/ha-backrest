@@ -19,6 +19,8 @@ from custom_components.backrest.api import (
     OperationList,
     OperationStatus,
     PlanBackups,
+    Repo,
+    RepoStats,
 )
 
 from .conftest import load_json
@@ -175,3 +177,46 @@ def test_scheduled_run_is_skipped() -> None:
     assert queued.latest is not None
     assert queued.latest.status is OperationStatus.PENDING
     assert not queued.latest.status.is_running
+
+
+async def test_repo_stats(
+    aioclient_mock: AiohttpClientMocker, client: BackrestClient
+) -> None:
+    """The newest successful stats run wins; failed runs are skipped."""
+    aioclient_mock.post(
+        f"{URL}/v1.Backrest/GetOperations",
+        json=load_json("operations_repo_swissbackup.json"),
+    )
+    repo = Repo(id="swissbackup", uri="s3:x", guid="7d2e11")
+    stats = await client.get_all_repo_stats([repo])
+    assert aioclient_mock.mock_calls[0][2] == {
+        "selector": {"repoGuid": "7d2e11"},
+        "lastN": "200",
+    }
+    assert stats == {
+        "swissbackup": RepoStats(
+            total_size=11811160064,
+            total_uncompressed_size=17716740096,
+            compression_ratio=1.5,
+            snapshot_count=35,
+        )
+    }
+
+
+async def test_repo_stats_without_guid(
+    aioclient_mock: AiohttpClientMocker, client: BackrestClient
+) -> None:
+    """A repo without a GUID cannot be selected, so no request is made."""
+    assert await client.get_repo_stats(Repo(id="old", uri="", guid="")) is None
+    assert aioclient_mock.call_count == 0
+
+
+async def test_repo_stats_none_collected(
+    aioclient_mock: AiohttpClientMocker, client: BackrestClient
+) -> None:
+    """No stats operation yet means no statistics."""
+    aioclient_mock.post(
+        f"{URL}/v1.Backrest/GetOperations", json=load_json("operations_appdata.json")
+    )
+    repo = Repo(id="elektra-sftp", uri="sftp:x", guid="3f1c9a")
+    assert await client.get_repo_stats(repo) is None

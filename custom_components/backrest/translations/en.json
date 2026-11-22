@@ -119,6 +119,12 @@
       "snapshots": {
         "name": "Snapshots"
       },
+      "repo_size": {
+        "name": "Repository size"
+      },
+      "compression_ratio": {
+        "name": "Compression ratio"
+      },
       "data_added_30d": {
         "name": "Data added (30 days)"
       }

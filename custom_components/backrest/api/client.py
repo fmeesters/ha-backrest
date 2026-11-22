@@ -8,6 +8,7 @@ This module has no Home Assistant imports, so it can move to its own package.
 from __future__ import annotations
 
 import asyncio
+from collections.abc import Sequence
 from typing import Any
 
 import aiohttp
@@ -17,13 +18,24 @@ from .exceptions import (
     BackrestConnectionError,
     BackrestResponseError,
 )
-from .models import BackrestConfig, OperationList, PlanBackups, SummaryDashboard
+from .models import (
+    BackrestConfig,
+    OperationList,
+    PlanBackups,
+    Repo,
+    RepoStats,
+    SummaryDashboard,
+    latest_repo_stats,
+)
 
 SERVICE_PATH = "/v1.Backrest"
 DEFAULT_TIMEOUT = 30
 # Enough to hold the backup, snapshot index, forget, prune and hook runs of the
 # last couple of backup runs, so the newest finished backup is always included.
 RECENT_OPERATIONS = 40
+# Stats run at most once a day, after a forget or prune. A repo logs a handful
+# of operations per backup run, so this covers well over a week of history.
+RECENT_REPO_OPERATIONS = 200
 
 _AUTH_CODES = {"unauthenticated", "permission_denied"}
 
@@ -99,12 +111,21 @@ class BackrestClient:
         return SummaryDashboard.from_dict(await self._call("GetSummaryDashboard"))
 
     async def get_operations(
-        self, *, plan_id: str | None = None, last_n: int | None = None
+        self,
+        *,
+        plan_id: str | None = None,
+        repo_guid: str | None = None,
+        last_n: int | None = None,
     ) -> OperationList:
-        """Return operations, optionally for one plan and limited to the last N."""
+        """Return operations for a plan or repo, optionally only the last N."""
         payload: dict[str, Any] = {}
+        selector: dict[str, str] = {}
         if plan_id is not None:
-            payload["selector"] = {"planId": plan_id}
+            selector["planId"] = plan_id
+        if repo_guid is not None:
+            selector["repoGuid"] = repo_guid
+        if selector:
+            payload["selector"] = selector
         if last_n is not None:
             payload["lastN"] = str(last_n)
         return OperationList.from_dict(await self._call("GetOperations", payload))
@@ -122,3 +143,24 @@ class BackrestClient:
             *(self.get_plan_backups(pid) for pid in plan_ids)
         )
         return dict(zip(plan_ids, results, strict=True))
+
+    async def get_repo_stats(self, repo: Repo) -> RepoStats | None:
+        """Return the newest repository statistics Backrest collected, if any.
+
+        Backrest runs `restic stats` after a forget or prune, at most once a
+        day. The summary dashboard does not fill in its snapshot count, so the
+        stats operation is the source for snapshots and repository size.
+        """
+        if not repo.guid:
+            return None
+        operations = await self.get_operations(
+            repo_guid=repo.guid, last_n=RECENT_REPO_OPERATIONS
+        )
+        return latest_repo_stats(operations.operations)
+
+    async def get_all_repo_stats(
+        self, repos: Sequence[Repo]
+    ) -> dict[str, RepoStats | None]:
+        """Fetch the statistics of several repos in parallel."""
+        results = await asyncio.gather(*(self.get_repo_stats(r) for r in repos))
+        return {repo.id: stats for repo, stats in zip(repos, results, strict=True)}

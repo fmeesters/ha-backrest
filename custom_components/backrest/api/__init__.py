@@ -18,6 +18,7 @@ from .models import (
     Plan,
     PlanBackups,
     Repo,
+    RepoStats,
     Summary,
     SummaryDashboard,
 )
@@ -38,6 +39,7 @@ __all__ = [
     "Plan",
     "PlanBackups",
     "Repo",
+    "RepoStats",
     "Summary",
     "SummaryDashboard",
 ]
