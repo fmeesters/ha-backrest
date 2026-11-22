@@ -1,6 +1,6 @@
 [project]
 name = "ha-backrest"
-version = "0.1.2"
+version = "0.1.5"
 description = "Home Assistant integration for Backrest (restic) backups"
 requires-python = ">=3.13"
 license = "MIT"

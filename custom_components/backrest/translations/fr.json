@@ -119,6 +119,12 @@
       "snapshots": {
         "name": "Instantanés"
       },
+      "repo_size": {
+        "name": "Taille du dépôt"
+      },
+      "compression_ratio": {
+        "name": "Taux de compression"
+      },
       "data_added_30d": {
         "name": "Données ajoutées (30 jours)"
       }

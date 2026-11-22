@@ -31,6 +31,8 @@
       "backups_warning_30d": { "default": "mdi:alert-outline" },
       "backups_failed_30d": { "default": "mdi:close-circle-outline" },
       "snapshots": { "default": "mdi:camera-burst" },
+      "repo_size": { "default": "mdi:database" },
+      "compression_ratio": { "default": "mdi:arrow-collapse-vertical" },
       "data_added_30d": { "default": "mdi:database-arrow-up" }
     }
   }

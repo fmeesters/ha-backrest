@@ -16,7 +16,7 @@ For every Backrest instance you add, you get:
   - successful, warning and failed backups over the last 30 days
   - binary sensors *Backup running* and *Problem* (last backup failed, or the plan is overdue according to Backrest)
 - a `backrest_backup` event when a backup starts, progresses and ends.
-- a device per **repository**, with the number of snapshots and the data added over 30 days.
+- a device per **repository**, with the number of snapshots, the repository size, the compression ratio and the data added over 30 days.
 
 New plans and repositories show up by themselves. Removed ones become unavailable and can then be deleted from the device page.
 
@@ -60,6 +60,7 @@ Backrest exposes its API as [Connect RPC](https://connectrpc.com) (JSON over HTT
 | `GetConfig` | instance name, plans and repositories |
 | `GetSummaryDashboard` | 30-day statistics, next backup, protected data, overdue flag |
 | `GetOperations` (last 40 per plan) | newest and newest finished backup, progress, errors |
+| `GetOperations` (last 200 per repository) | newest `restic stats` run: snapshots, size, compression |
 
 The API client lives in `custom_components/backrest/api/` and has no Home Assistant imports.
 
@@ -138,7 +139,7 @@ actions:
 
 - Progress is refreshed once a minute; live progress via Backrest's event stream is planned.
 - Backrest has no read-only API users. The Home Assistant user can do everything in Backrest, although the integration itself only reads.
-- *Snapshots* comes from Backrest's own summary and can stay at 0 until Backrest has indexed the repository.
+- *Snapshots*, *Repository size* and *Compression ratio* come from Backrest's `restic stats` run. Backrest runs it after a forget or prune, at most once a day, so these stay unknown until the first run. You can start one by hand under the repository in Backrest (*Stats*). Backrest's summary has a snapshot field as well, but Backrest 1.14 never fills it in.
 - Only plans of the instance itself are shown, not plans of other instances synced to it.
 - Custom brand images need Home Assistant 2026.3 or newer; older versions show a placeholder icon.
 
@@ -164,7 +165,7 @@ The integration follows the Home Assistant [Integration Quality Scale](https://d
 
 ## Releases
 
-Push a tag that matches the version in `manifest.json` (for example `v0.1.2`) and the release workflow publishes a GitHub release; a release made by hand in the GitHub UI with such a tag works too. HACS then offers it as an update.
+Push a tag that matches the version in `manifest.json` (for example `v0.1.2`) and the release workflow publishes a GitHub release; a release made by hand in the GitHub UI with such a tag works too. HACS then offers it as an update. Do not tick *Set as a pre-release*: HACS skips pre-releases. `hacs.json` sets `hide_default_branch`, so HACS never offers plain commits on `main`.
 
 ## Development
 

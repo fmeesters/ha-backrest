@@ -1,0 +1,8 @@
+{
+  "operations": [
+    {"id": "120", "flowId": "120", "repoId": "swissbackup", "repoGuid": "7d2e11", "planId": "_system_", "instanceId": "dockervm", "status": "STATUS_SUCCESS", "unixTimeStartMs": "1763694000000", "unixTimeEndMs": "1763694012000", "operationStats": {"stats": {"totalSize": "10737418240", "totalUncompressedSize": "16106127360", "compressionRatio": 1.5, "totalBlobCount": "4200", "snapshotCount": "33"}}},
+    {"id": "130", "flowId": "128", "repoId": "swissbackup", "repoGuid": "7d2e11", "planId": "offsite", "instanceId": "dockervm", "status": "STATUS_SUCCESS", "unixTimeStartMs": "1763780000000", "unixTimeEndMs": "1763780100000", "operationIndexSnapshot": {"snapshot": {"id": "abcd"}}},
+    {"id": "135", "flowId": "135", "repoId": "swissbackup", "repoGuid": "7d2e11", "planId": "_system_", "instanceId": "dockervm", "status": "STATUS_SUCCESS", "unixTimeStartMs": "1763780400000", "unixTimeEndMs": "1763780410000", "operationStats": {"stats": {"totalSize": "11811160064", "totalUncompressedSize": "17716740096", "compressionRatio": 1.5, "totalBlobCount": "4300", "snapshotCount": "35"}}},
+    {"id": "140", "flowId": "140", "repoId": "swissbackup", "repoGuid": "7d2e11", "planId": "_system_", "instanceId": "dockervm", "status": "STATUS_ERROR", "unixTimeStartMs": "1763866800000", "unixTimeEndMs": "1763866801000", "displayMessage": "stats failed", "operationStats": {}}
+  ]
+}

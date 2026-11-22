@@ -120,6 +120,15 @@ def _summary(attr: str) -> Callable[[PlanData | RepoData], StateType]:
     return value
 
 
+def _stats(attr: str) -> Callable[[RepoData], StateType]:
+    """Read a repo statistic; unknown until Backrest has collected stats."""
+
+    def value(data: RepoData) -> StateType:
+        return getattr(data.stats, attr) if data.stats else None
+
+    return value
+
+
 @dataclass(frozen=True, kw_only=True)
 class BackrestPlanSensorDescription(SensorEntityDescription):
     """Describes a plan sensor."""
@@ -233,7 +242,25 @@ REPO_SENSORS: tuple[BackrestRepoSensorDescription, ...] = (
         key="snapshots",
         translation_key="snapshots",
         state_class=SensorStateClass.MEASUREMENT,
-        value_fn=_summary("total_snapshots"),
+        value_fn=_stats("snapshot_count"),
+    ),
+    BackrestRepoSensorDescription(
+        key="repo_size",
+        translation_key="repo_size",
+        device_class=SensorDeviceClass.DATA_SIZE,
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement=UnitOfInformation.BYTES,
+        suggested_unit_of_measurement=UnitOfInformation.GIBIBYTES,
+        suggested_display_precision=2,
+        value_fn=_stats("total_size"),
+    ),
+    BackrestRepoSensorDescription(
+        key="compression_ratio",
+        translation_key="compression_ratio",
+        state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=2,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value_fn=_stats("compression_ratio"),
     ),
     BackrestRepoSensorDescription(
         key="data_added_30d",

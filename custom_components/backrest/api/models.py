@@ -257,6 +257,26 @@ class BackupSummary:
         )
 
 
+@dataclass(frozen=True, slots=True)
+class RepoStats:
+    """Repository statistics from `restic stats` (a Backrest stats operation)."""
+
+    total_size: int
+    total_uncompressed_size: int
+    compression_ratio: float
+    snapshot_count: int
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> RepoStats:
+        """Parse a RepoStats message."""
+        return cls(
+            total_size=_int(data.get("totalSize")),
+            total_uncompressed_size=_int(data.get("totalUncompressedSize")),
+            compression_ratio=_float(data.get("compressionRatio")),
+            snapshot_count=_int(data.get("snapshotCount")),
+        )
+
+
 class OperationKind(StrEnum):
     """Which kind of work an operation does (the proto `op` oneof)."""
 
@@ -290,6 +310,7 @@ class Operation:
     progress: BackupProgress | None = None
     summary: BackupSummary | None = None
     error_count: int = 0
+    stats: RepoStats | None = None
 
     def is_scheduled(self, now: datetime) -> bool:
         """Return True for a pending operation that is planned for later."""
@@ -320,6 +341,11 @@ class Operation:
         progress: BackupProgress | None = None
         summary: BackupSummary | None = None
         error_count = 0
+        stats: RepoStats | None = None
+        if kind is OperationKind.STATS:
+            stats_op = data.get(kind.value) or {}
+            if "stats" in stats_op:
+                stats = RepoStats.from_dict(stats_op["stats"])
         if kind is OperationKind.BACKUP:
             backup = data.get(kind.value) or {}
             last_status = backup.get("lastStatus") or {}
@@ -343,6 +369,7 @@ class Operation:
             progress=progress,
             summary=summary,
             error_count=error_count,
+            stats=stats,
         )
 
 
@@ -375,6 +402,20 @@ class PlanBackups:
         latest = backups[0] if backups else None
         last_finished = next((op for op in backups if op.status.is_finished), None)
         return cls(latest=latest, last_finished=last_finished)
+
+
+def latest_repo_stats(operations: list[Operation]) -> RepoStats | None:
+    """Return the statistics of the newest successful stats operation."""
+    return next(
+        (
+            op.stats
+            for op in sorted(operations, key=lambda op: op.id, reverse=True)
+            if op.kind is OperationKind.STATS
+            and op.status is OperationStatus.SUCCESS
+            and op.stats is not None
+        ),
+        None,
+    )
 
 
 @dataclass(slots=True)

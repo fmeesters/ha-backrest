@@ -19,6 +19,7 @@ from .api import (
     Plan,
     PlanBackups,
     Repo,
+    RepoStats,
     Summary,
 )
 from .const import DOMAIN, LOGGER, SCAN_INTERVAL
@@ -42,6 +43,7 @@ class RepoData:
 
     repo: Repo
     summary: Summary | None
+    stats: RepoStats | None = None
 
 
 @dataclass(slots=True)
@@ -85,9 +87,10 @@ class BackrestCoordinator(DataUpdateCoordinator[BackrestData]):
         """Fetch the latest state from Backrest."""
         try:
             config = await self.client.get_config()
-            summary, backups = await asyncio.gather(
+            summary, backups, stats = await asyncio.gather(
                 self.client.get_summary_dashboard(),
                 self.client.get_all_plan_backups([plan.id for plan in config.plans]),
+                self.client.get_all_repo_stats(config.repos),
             )
         except BackrestAuthenticationError as err:
             raise ConfigEntryAuthFailed(
@@ -111,7 +114,11 @@ class BackrestCoordinator(DataUpdateCoordinator[BackrestData]):
                 for plan in config.plans
             },
             repos={
-                repo.id: RepoData(repo=repo, summary=summary.repos.get(repo.id))
+                repo.id: RepoData(
+                    repo=repo,
+                    summary=summary.repos.get(repo.id),
+                    stats=stats.get(repo.id),
+                )
                 for repo in config.repos
             },
         )

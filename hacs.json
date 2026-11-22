@@ -1,5 +1,6 @@
 {
   "name": "Backrest",
   "homeassistant": "2025.10.0",
-  "render_readme": true
+  "render_readme": true,
+  "hide_default_branch": true
 }

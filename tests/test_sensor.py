@@ -67,8 +67,15 @@ async def test_failed_plan(
 async def test_repo_sensors(
     hass: HomeAssistant, init_integration: MockConfigEntry
 ) -> None:
-    """Repos get snapshot counts and data added."""
+    """Repos get snapshots and size from the newest stats run, and data added."""
     assert _state(hass, "sensor.dockervm_swissbackup_snapshots") == "35"
+    assert _state(hass, "sensor.dockervm_swissbackup_repository_size") == "11.0"
+    assert _state(hass, "sensor.dockervm_swissbackup_compression_ratio") == "1.5"
+    # No stats collected yet: unknown rather than a misleading 0.
+    assert _state(hass, "sensor.dockervm_elektra_sftp_snapshots") == STATE_UNKNOWN
+    assert _state(hass, "sensor.dockervm_elektra_sftp_repository_size") == (
+        STATE_UNKNOWN
+    )
     assert _state(hass, "sensor.dockervm_elektra_sftp_data_added_30_days") == "5.0"
 
 
